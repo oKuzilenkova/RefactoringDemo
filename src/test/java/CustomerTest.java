@@ -175,4 +175,12 @@ public class CustomerTest {
         assertEquals("Amount owed is 7.5", statement[4].trim());
     }
 
+
+    @Test(expected = NullPointerException.class)
+    public void shouldNPEWhenInvalidRental() {
+        stubRental = mock(Rental.class);
+        sutCustomer.addRental(stubRental);
+        sutCustomer.Statement();
+    }
+
 }
