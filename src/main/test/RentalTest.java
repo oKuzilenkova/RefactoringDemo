@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 
 public class RentalTest {
 
@@ -23,7 +24,7 @@ public class RentalTest {
 
         //region then
         assertNotNull(sut);
-        assertEquals(dummyMovie, sut.getMovie());
+        assertSame(dummyMovie, sut.getMovie());
         assertEquals(dummyDaysRented, sut.getDaysRented());
         //endregion
     }
