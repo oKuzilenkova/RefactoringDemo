@@ -1,3 +1,5 @@
+package java;
+
 import com.scrumtrek.simplestore.Movie;
 import com.scrumtrek.simplestore.PriceCodes;
 import org.junit.Test;
