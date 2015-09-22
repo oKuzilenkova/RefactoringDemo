@@ -1,4 +1,3 @@
-package java;
 
 import com.scrumtrek.simplestore.Customer;
 import com.scrumtrek.simplestore.Movie;
