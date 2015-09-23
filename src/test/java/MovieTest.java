@@ -25,5 +25,18 @@ public class MovieTest {
         assertEquals(dummyTitle, sut.getTitle());
         //endregion
     }
+
+    @Test
+    public void shouldSetNewPriceCode() {
+        String dummyTitle = "Title";
+        PriceCodes firstPriceCode = PriceCodes.Childrens;
+        PriceCodes secondPriceCode = PriceCodes.NewRelease;
+
+        Movie sut = new Movie(dummyTitle, firstPriceCode);
+        assertEquals(firstPriceCode, sut.getPriceCode());
+
+        sut.setPriceCode(secondPriceCode);
+        assertEquals(secondPriceCode, sut.getPriceCode());
+    }
 }
 
