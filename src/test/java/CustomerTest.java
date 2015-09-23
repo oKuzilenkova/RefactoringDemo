@@ -5,6 +5,9 @@ import com.scrumtrek.simplestore.PriceCodes;
 import com.scrumtrek.simplestore.Rental;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -12,27 +15,28 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CustomerTest {
 
-    private String dummyCustomerName;
+    private String dummyCustomerName = "Name";
+    private String dummyMovieTitle = "MovieTitle";
     private Customer sutCustomer;
-    private String dummyMovieTitle;
+
+    @Mock
     private Rental stubRental;
+    @Mock
     private Movie stubMovie;
 
     @Before
     public void setUp() {
-        dummyCustomerName = "Name";
         sutCustomer = new Customer(dummyCustomerName);
-        dummyMovieTitle = "MovieTitle";
 
         stubMovie = mock(Movie.class);
-        when(stubMovie.getTitle()).thenReturn(dummyMovieTitle);
-
         stubRental = mock(Rental.class);
         when(stubRental.getMovie()).thenReturn(stubMovie);
     }
 
+    //region Simple Customer tests
     @Test
     public void shouldCreateCustomerWithValidParams() {
         assertNotNull(sutCustomer);
@@ -45,55 +49,65 @@ public class CustomerTest {
 
         assertThat(statement).contains(dummyCustomerName);
     }
+//endregion
 
-
+    //region Title in Statement tests
     @Test
-    public void shouldReturnNewReleaseAmountWhenSingleNewRelease() {
-        when(stubMovie.getPriceCode()).thenReturn(PriceCodes.NewRelease);
-        when(stubRental.getDaysRented()).thenReturn(1);
+    public void shouldPrintMovieTitleWhenStatementWithMovie() {
+        Rental stubRental = new RentalStubBuilder().withMovieTitle(dummyMovieTitle).build();
 
         sutCustomer.addRental(stubRental);
 
         String[] statement = sutCustomer.Statement().split("\n");
-        assertThat( statement[1].trim()).startsWith(dummyMovieTitle);
+        assertThat(statement[1].trim()).startsWith(dummyMovieTitle);
+    }
+    //endregion
+
+    //region 1 PriceCode 1 Day tests
+    @Test
+    public void shouldReturnNewReleaseAmountWhen1DayNewRelease() {
+        Rental stubRental = new RentalStubBuilder().withPriceCode(PriceCodes.NewRelease).withDaysRented(1).build();
+
+        sutCustomer.addRental(stubRental);
+
+        String[] statement = sutCustomer.Statement().split("\n");
+
         assertThat(statement[1].trim()).endsWith("\t3.0");
         assertThat(statement[2].trim()).endsWith(" 3.0");
     }
 
     @Test
-    public void shouldReturnChildrensAmountWhenSingleChildrens() {
-        when(stubMovie.getPriceCode()).thenReturn(PriceCodes.Childrens);
-        when(stubRental.getDaysRented()).thenReturn(1);
+    public void shouldReturnChildrensAmountWhen1DayChildrens() {
+        Rental stubRental = new RentalStubBuilder().withPriceCode(PriceCodes.Childrens).withDaysRented(1).build();
 
         sutCustomer.addRental(stubRental);
 
         String[] statement = sutCustomer.Statement().split("\n");
 
-        assertThat( statement[1].trim()).startsWith(dummyMovieTitle);
         assertThat(statement[1].trim()).endsWith("\t1.5");
         assertThat(statement[2].trim()).endsWith(" 1.5");
     }
 
 
     @Test
-    public void shouldReturnRegularAmountWhenSingleRegular() {
-        when(stubMovie.getPriceCode()).thenReturn(PriceCodes.Regular);
-        when(stubRental.getDaysRented()).thenReturn(1);
+    public void shouldReturnRegularAmountWhen1DayRegular() {
+        Rental stubRental = new RentalStubBuilder().withPriceCode(PriceCodes.Regular).withDaysRented(1).build();
 
         sutCustomer.addRental(stubRental);
 
         String[] statement = sutCustomer.Statement().split("\n");
 
-        assertThat( statement[1].trim()).startsWith(dummyMovieTitle);
         assertThat(statement[1].trim()).endsWith("\t2.0");
         assertThat(statement[2].trim()).endsWith(" 2.0");
     }
 
+   // endregion
 
+    //region Frequient tests
     @Test
-    public void shouldFrequentEqualsRentalWhenOneDaysAndNewRelease() {
-        when(stubMovie.getPriceCode()).thenReturn(PriceCodes.NewRelease);
-        when(stubRental.getDaysRented()).thenReturn(1);
+    public void shouldFrequentEqualsRentalWhen1DayNewRelease() {
+        Rental stubRental = new RentalStubBuilder().withPriceCode(PriceCodes.NewRelease).withDaysRented(1).build();
+
         sutCustomer.addRental(stubRental);
 
         String[] statement = sutCustomer.Statement().split("\n");
@@ -102,9 +116,9 @@ public class CustomerTest {
     }
 
     @Test
-    public void shouldFrequentEqualsDoubleRentalWhenMoreThanOneDaysAndNewRelease() {
-        when(stubMovie.getPriceCode()).thenReturn(PriceCodes.NewRelease);
-        when(stubRental.getDaysRented()).thenReturn(2);
+    public void shouldFrequentEqualsDoubleRentalWhen2DaysNewRelease() {
+        Rental stubRental = new RentalStubBuilder().withPriceCode(PriceCodes.NewRelease).withDaysRented(2).build();
+
         sutCustomer.addRental(stubRental);
 
         String[] statement = sutCustomer.Statement().split("\n");
@@ -113,9 +127,9 @@ public class CustomerTest {
     }
 
     @Test
-    public void shouldFrequentEqualsRentalWhenOneDaysAndNotNewRelease() {
-        when(stubMovie.getPriceCode()).thenReturn(PriceCodes.Regular);
-        when(stubRental.getDaysRented()).thenReturn(1);
+    public void shouldFrequentEqualsRentalWhen1DayNotNewRelease() {
+        Rental stubRental = new RentalStubBuilder().withPriceCode(PriceCodes.Regular).withDaysRented(1).build();
+
         sutCustomer.addRental(stubRental);
 
         String[] statement = sutCustomer.Statement().split("\n");
@@ -123,10 +137,12 @@ public class CustomerTest {
         assertThat(statement[3].trim()).contains(" 1 ");
     }
 
+    //endregion
+
+    //region Boundary Condition tests
     @Test
-    public void shouldReturnNewReleaseAmountWhenTwoNewRelease() {
-        when(stubMovie.getPriceCode()).thenReturn(PriceCodes.NewRelease);
-        when(stubRental.getDaysRented()).thenReturn(1);
+    public void shouldReturnNewReleaseAmountWhen2NewRelease() {
+        Rental stubRental = new RentalStubBuilder().withPriceCode(PriceCodes.NewRelease).withDaysRented(1).build();
 
         sutCustomer.addRental(stubRental);
         sutCustomer.addRental(stubRental);
@@ -137,34 +153,32 @@ public class CustomerTest {
     }
 
     @Test
-    public void shouldReturnRegularAmountWhenThirdRegular() {
-        when(stubMovie.getPriceCode()).thenReturn(PriceCodes.Regular);
-        when(stubRental.getDaysRented()).thenReturn(3);
+    public void shouldReturnRegularAmountWhen3DaysRegular() {
+        Rental stubRental = new RentalStubBuilder().withPriceCode(PriceCodes.Regular).withDaysRented(3).build();
 
         sutCustomer.addRental(stubRental);
 
         String[] statement = sutCustomer.Statement().split("\n");
 
-        assertThat( statement[1].trim()).startsWith(dummyMovieTitle);
         assertThat(statement[1].trim()).endsWith("\t3.5");
         assertThat(statement[2].trim()).endsWith("3.5");
     }
 
-
     @Test
-    public void shouldReturnChildrensAmountWhenFiveChildrens() {
-        when(stubMovie.getPriceCode()).thenReturn(PriceCodes.Childrens);
-        when(stubRental.getDaysRented()).thenReturn(5);
+    public void shouldReturnChildrensAmountWhen5DaysChildrens() {
+        Rental stubRental = new RentalStubBuilder().withPriceCode(PriceCodes.Childrens).withDaysRented(5).build();
 
         sutCustomer.addRental(stubRental);
 
         String[] statement = sutCustomer.Statement().split("\n");
 
-        assertThat( statement[1].trim()).startsWith(dummyMovieTitle);
         assertThat(statement[1].trim()).endsWith("\t3.0");
         assertThat(statement[2].trim()).endsWith(" 3.0");
     }
 
+    //endregion
+
+    //region Bonus tests
     @Test
     public void shouldReturnTotalAmountWithoutBonusWhenAllRentalTypes() {
         when(stubMovie.getPriceCode())
@@ -200,12 +214,15 @@ public class CustomerTest {
         assertThat(statement[4].trim()).endsWith(" 13.5");
     }
 
+    //endregion
 
+    //region Exception tests
     @Test(expected = NullPointerException.class)
     public void shouldNPEWhenInvalidRental() {
         stubRental = mock(Rental.class);
         sutCustomer.addRental(stubRental);
         sutCustomer.Statement();
     }
+    //endregion
 
 }

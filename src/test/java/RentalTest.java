@@ -1,25 +1,23 @@
-
 import com.scrumtrek.simplestore.Movie;
-import com.scrumtrek.simplestore.PriceCodes;
 import com.scrumtrek.simplestore.Rental;
+import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 public class RentalTest {
 
+    private Movie dummyMovie;
+    private int dummyDaysRented = 1;
+
+    @Before
+    public void setUp() {
+        dummyMovie = mock(Movie.class);
+    }
+
     @Test
     public void shouldCreateRentalWithValidParams() {
-        //region given
-        String dummyMovieTitle = "Title";
-        PriceCodes dummyMoviePriceCode = PriceCodes.Childrens;
-        Movie dummyMovie = new Movie(dummyMovieTitle, dummyMoviePriceCode);
-        int dummyDaysRented = 1;
-        //endregion
-
-        //region when
         Rental sut = new Rental(dummyMovie, dummyDaysRented);
         //endregion
 
