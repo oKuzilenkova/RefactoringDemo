@@ -56,8 +56,8 @@ public class CustomerTest {
 
         String[] statement = sutCustomer.Statement().split("\n");
         assertThat( statement[1].trim()).startsWith(dummyMovieTitle);
-        assertThat(statement[1].trim()).contains("3.0");
-        assertThat(statement[2].trim()).contains("3.0");
+        assertThat(statement[1].trim()).endsWith("\t3.0");
+        assertThat(statement[2].trim()).endsWith(" 3.0");
     }
 
     @Test
@@ -70,8 +70,8 @@ public class CustomerTest {
         String[] statement = sutCustomer.Statement().split("\n");
 
         assertThat( statement[1].trim()).startsWith(dummyMovieTitle);
-        assertThat(statement[1].trim()).contains("1.5");
-        assertThat(statement[2].trim()).contains("1.5");        
+        assertThat(statement[1].trim()).endsWith("\t1.5");
+        assertThat(statement[2].trim()).endsWith(" 1.5");
     }
 
 
@@ -85,8 +85,8 @@ public class CustomerTest {
         String[] statement = sutCustomer.Statement().split("\n");
 
         assertThat( statement[1].trim()).startsWith(dummyMovieTitle);
-        assertThat(statement[1].trim()).contains("2.0");
-        assertThat(statement[2].trim()).contains("2.0");
+        assertThat(statement[1].trim()).endsWith("\t2.0");
+        assertThat(statement[2].trim()).endsWith(" 2.0");
     }
 
 
@@ -98,7 +98,7 @@ public class CustomerTest {
 
         String[] statement = sutCustomer.Statement().split("\n");
 
-        assertThat(statement[3].trim()).contains("1");
+        assertThat(statement[3].trim()).contains(" 1 ");
     }
 
     @Test
@@ -109,7 +109,7 @@ public class CustomerTest {
 
         String[] statement = sutCustomer.Statement().split("\n");
 
-        assertThat(statement[3].trim()).contains("2");
+        assertThat(statement[3].trim()).contains(" 2 ");
     }
 
     @Test
@@ -120,7 +120,7 @@ public class CustomerTest {
 
         String[] statement = sutCustomer.Statement().split("\n");
 
-        assertThat(statement[3].trim()).contains("1");
+        assertThat(statement[3].trim()).contains(" 1 ");
     }
 
     @Test
@@ -133,7 +133,7 @@ public class CustomerTest {
 
         String[] statement = sutCustomer.Statement().split("\n");
 
-        assertThat(statement[3].trim()).contains("6.0");
+        assertThat(statement[3].trim()).endsWith(" 6.0");
     }
 
     @Test
@@ -146,8 +146,8 @@ public class CustomerTest {
         String[] statement = sutCustomer.Statement().split("\n");
 
         assertThat( statement[1].trim()).startsWith(dummyMovieTitle);
-        assertThat(statement[1].trim()).contains("3.5");
-        assertThat(statement[2].trim()).contains("3.5");
+        assertThat(statement[1].trim()).endsWith("\t3.5");
+        assertThat(statement[2].trim()).endsWith("3.5");
     }
 
 
@@ -161,12 +161,12 @@ public class CustomerTest {
         String[] statement = sutCustomer.Statement().split("\n");
 
         assertThat( statement[1].trim()).startsWith(dummyMovieTitle);
-        assertThat(statement[1].trim()).contains("3.0");
-        assertThat(statement[2].trim()).contains("3.0");
+        assertThat(statement[1].trim()).endsWith("\t3.0");
+        assertThat(statement[2].trim()).endsWith(" 3.0");
     }
 
     @Test
-    public void shouldReturnTotalAmountWhenAllRentalTypes() {
+    public void shouldReturnTotalAmountWithoutBonusWhenAllRentalTypes() {
         when(stubMovie.getPriceCode())
                 .thenReturn(PriceCodes.Childrens)
                 .thenReturn(PriceCodes.Regular)
@@ -179,7 +179,25 @@ public class CustomerTest {
 
         String[] statement = sutCustomer.Statement().split("\n");
 
-        assertThat(statement[4].trim()).contains("7.5");
+        assertThat(statement[4].trim()).endsWith(" 7.5");
+    }
+
+    @Test
+    public void shouldReturnTotalAmountWithBonusWhenAllRentalTypes() {
+        when(stubMovie.getPriceCode())
+                .thenReturn(PriceCodes.Childrens)
+                .thenReturn(PriceCodes.Regular)
+                .thenReturn(PriceCodes.NewRelease);
+        when(stubRental.getDaysRented()).thenReturn(2);
+
+        sutCustomer.addRental(stubRental);
+        sutCustomer.addRental(stubRental);
+        sutCustomer.addRental(stubRental);
+
+        String[] statement = sutCustomer.Statement().split("\n");
+
+        assertThat(statement[5].trim()).contains(" 5 ");
+        assertThat(statement[4].trim()).endsWith(" 13.5");
     }
 
 
