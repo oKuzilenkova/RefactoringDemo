@@ -31,8 +31,6 @@ public class CustomerTest {
     public void setUp() {
         sutCustomer = new Customer(dummyCustomerName);
 
-        stubMovie = mock(Movie.class);
-        stubRental = mock(Rental.class);
         when(stubRental.getMovie()).thenReturn(stubMovie);
     }
 
