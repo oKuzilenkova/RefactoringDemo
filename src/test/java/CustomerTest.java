@@ -6,6 +6,7 @@ import com.scrumtrek.simplestore.Rental;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.fest.assertions.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
@@ -40,22 +41,23 @@ public class CustomerTest {
 
     @Test
     public void shouldPrintCustomerNameWhenStatement() {
-        String[] statement = sutCustomer.Statement().split("\n");
+        String statement = sutCustomer.Statement();
 
-        assertEquals("Rental record for " + dummyCustomerName, statement[0].trim());
+        assertThat(statement).contains(dummyCustomerName);
     }
 
 
     @Test
-    public void shouldReturnNewReleaseAmountWhenNewRelease() {
+    public void shouldReturnNewReleaseAmountWhenSingleNewRelease() {
         when(stubMovie.getPriceCode()).thenReturn(PriceCodes.NewRelease);
         when(stubRental.getDaysRented()).thenReturn(1);
 
         sutCustomer.addRental(stubRental);
 
         String[] statement = sutCustomer.Statement().split("\n");
-        assertEquals(dummyMovieTitle + "\t3.0", statement[1].trim());
-        assertEquals("Amount owed is 3.0", statement[2].trim());
+        assertThat( statement[1].trim()).startsWith(dummyMovieTitle);
+        assertThat(statement[1].trim()).contains("3.0");
+        assertThat(statement[2].trim()).contains("3.0");
     }
 
     @Test
@@ -67,8 +69,9 @@ public class CustomerTest {
 
         String[] statement = sutCustomer.Statement().split("\n");
 
-        assertEquals(dummyMovieTitle + "\t1.5", statement[1].trim());
-        assertEquals("Amount owed is 1.5", statement[2].trim());
+        assertThat( statement[1].trim()).startsWith(dummyMovieTitle);
+        assertThat(statement[1].trim()).contains("1.5");
+        assertThat(statement[2].trim()).contains("1.5");        
     }
 
 
@@ -81,8 +84,9 @@ public class CustomerTest {
 
         String[] statement = sutCustomer.Statement().split("\n");
 
-        assertEquals(dummyMovieTitle + "\t2.0", statement[1].trim());
-        assertEquals("Amount owed is 2.0", statement[2].trim());
+        assertThat( statement[1].trim()).startsWith(dummyMovieTitle);
+        assertThat(statement[1].trim()).contains("2.0");
+        assertThat(statement[2].trim()).contains("2.0");
     }
 
 
@@ -94,7 +98,7 @@ public class CustomerTest {
 
         String[] statement = sutCustomer.Statement().split("\n");
 
-        assertEquals("You earned 1 frequent renter points.", statement[3].trim());
+        assertThat(statement[3].trim()).contains("1");
     }
 
     @Test
@@ -105,7 +109,7 @@ public class CustomerTest {
 
         String[] statement = sutCustomer.Statement().split("\n");
 
-        assertEquals("You earned 2 frequent renter points.", statement[3].trim());
+        assertThat(statement[3].trim()).contains("2");
     }
 
     @Test
@@ -116,7 +120,7 @@ public class CustomerTest {
 
         String[] statement = sutCustomer.Statement().split("\n");
 
-        assertEquals("You earned 1 frequent renter points.", statement[3].trim());
+        assertThat(statement[3].trim()).contains("1");
     }
 
     @Test
@@ -128,7 +132,8 @@ public class CustomerTest {
         sutCustomer.addRental(stubRental);
 
         String[] statement = sutCustomer.Statement().split("\n");
-        assertEquals("Amount owed is 6.0", statement[3].trim());
+
+        assertThat(statement[3].trim()).contains("6.0");
     }
 
     @Test
@@ -140,8 +145,9 @@ public class CustomerTest {
 
         String[] statement = sutCustomer.Statement().split("\n");
 
-        assertEquals(dummyMovieTitle + "\t3.5", statement[1].trim());
-        assertEquals("Amount owed is 3.5", statement[2].trim());
+        assertThat( statement[1].trim()).startsWith(dummyMovieTitle);
+        assertThat(statement[1].trim()).contains("3.5");
+        assertThat(statement[2].trim()).contains("3.5");
     }
 
 
@@ -154,8 +160,9 @@ public class CustomerTest {
 
         String[] statement = sutCustomer.Statement().split("\n");
 
-        assertEquals(dummyMovieTitle + "\t3.0", statement[1].trim());
-        assertEquals("Amount owed is 3.0", statement[2].trim());
+        assertThat( statement[1].trim()).startsWith(dummyMovieTitle);
+        assertThat(statement[1].trim()).contains("3.0");
+        assertThat(statement[2].trim()).contains("3.0");
     }
 
     @Test
@@ -172,7 +179,7 @@ public class CustomerTest {
 
         String[] statement = sutCustomer.Statement().split("\n");
 
-        assertEquals("Amount owed is 7.5", statement[4].trim());
+        assertThat(statement[4].trim()).contains("7.5");
     }
 
 
